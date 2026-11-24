@@ -7,6 +7,8 @@ import { AuthorizationModule } from '@nestjs/authorization';
 import { RolesModule } from './roles/roles.module.js';
 import { UsersModule } from './users/users.module.js';
 import { AuthModule } from './auth/auth.module.js';
+import { ReservationsModule } from './reservations/reservations.module.js';
+import { ParkingSpotsModule } from './parking-spots/parking-spots.module.js';
 
 @Module({
   imports: [
@@ -43,6 +45,8 @@ import { AuthModule } from './auth/auth.module.js';
     RolesModule,
     UsersModule,
     AuthModule,
+    ReservationsModule,
+    ParkingSpotsModule,
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
