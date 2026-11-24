@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: preparcial_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: preparcial
+      POSTGRES_PASSWORD: preparcial123
+      POSTGRES_DB: preparcial_db
+    ports:
+      - "5436:5432"
+    volumes:
+      - preparcial_data:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d:ro
+volumes:
+  preparcial_data:

@@ -1,0 +1,95 @@
+@base = http://localhost:3000
+
+### login admin
+# @name loginAdmin
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "admin@uniandes.edu.co", "password": "Admin1234" }
+
+### login ana (supervisor)
+# @name loginAna
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "ana@uniandes.edu.co", "password": "Clave1234" }
+
+### login luis (sin roles)
+# @name loginLuis
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "luis@uniandes.edu.co", "password": "Clave1234" }
+
+### login pedro (desactivado, responde 423)
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "pedro@uniandes.edu.co", "password": "Clave1234" }
+
+### registro
+POST {{base}}/auth/register
+Content-Type: application/json
+
+{ "email": "sara@uniandes.edu.co", "password": "Clave1234", "name": "Sara", "phone": "3009876543" }
+
+### renovar tokens
+# @name refreshAdmin
+POST {{base}}/auth/refresh
+Content-Type: application/json
+
+{ "refreshToken": "{{loginAdmin.response.body.$.refreshToken}}" }
+
+### cerrar sesión
+POST {{base}}/auth/logout
+Content-Type: application/json
+
+{ "refreshToken": "{{refreshAdmin.response.body.$.refreshToken}}" }
+
+### mi perfil
+GET {{base}}/users/me
+Authorization: Bearer {{loginAdmin.response.body.$.accessToken}}
+
+### listar usuarios (admin)
+# @name usuarios
+GET {{base}}/users
+Authorization: Bearer {{loginAdmin.response.body.$.accessToken}}
+
+### listar usuarios con supervisor (403)
+GET {{base}}/users
+Authorization: Bearer {{loginAna.response.body.$.accessToken}}
+
+### listar usuarios sin token (401)
+GET {{base}}/users
+
+### crear rol (admin)
+POST {{base}}/roles
+Authorization: Bearer {{loginAdmin.response.body.$.accessToken}}
+Content-Type: application/json
+
+{ "role_name": "auditor", "description": "Revisa la operación" }
+
+### listar roles (admin)
+GET {{base}}/roles
+Authorization: Bearer {{loginAdmin.response.body.$.accessToken}}
+
+### asignar roles al cuarto usuario de la lista, que es pedro (admin)
+PATCH {{base}}/users/{{usuarios.response.body.$[3].id}}/roles
+Authorization: Bearer {{loginAdmin.response.body.$.accessToken}}
+Content-Type: application/json
+
+{ "roles": ["supervisor"] }
+
+### asignar un rol que no existe (400)
+PATCH {{base}}/users/{{usuarios.response.body.$[3].id}}/roles
+Authorization: Bearer {{loginAdmin.response.body.$.accessToken}}
+Content-Type: application/json
+
+{ "roles": ["no-existe"] }
+
+### asignar roles a un usuario que no existe (404)
+PATCH {{base}}/users/11111111-1111-4111-8111-111111111111/roles
+Authorization: Bearer {{loginAdmin.response.body.$.accessToken}}
+Content-Type: application/json
+
+{ "roles": ["supervisor"] }
